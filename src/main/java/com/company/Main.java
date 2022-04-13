@@ -9,8 +9,8 @@ import static java.lang.Character.UNASSIGNED;
 
 public class Main {
     public static int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    public static int[] result;
-    public static int[] result2;
+//    public static int[] result;
+//    public static int[] result2;
     private static int difficulty;
 
 
@@ -200,7 +200,7 @@ public class Main {
             int update = scan.nextInt();
 
             grid[row][column] = update;
-            printGrid();
+            printGrid(grid);
         }
 
         public static void inGameMenu () throws IOException {
@@ -218,23 +218,22 @@ public class Main {
                     break;
                 }
                 case 2: {
-//                    if (Arrays.equals(grid, savedGrid)) {
-//                        System.out.println("congratulations");
-//                     mainMenu();
-                    printGridSavedGrid();
-//                   }
-//                   else {
-//                       System.out.println("that is not correct");
-//                       printGrid();
-//                       inGameMenu();
-//                   // printGrid();
+                    if (Arrays.equals(grid, savedGrid)) {
+                        System.out.println("congratulations");
+                     mainMenu();
 
-//                   }
+                   }
+                   else {
+                       System.out.println("that is not correct");
+                       printGrid(grid);
+                       inGameMenu();
+                   // printGrid();
+
+                   }
                     break;
                 }
                 case 3: {
                     System.out.println("coming soon");
-                    printGridSavedGrid();
                     inGameMenu();
                     break;
                 }
@@ -252,12 +251,13 @@ public class Main {
             populateFirstBlock();
             populateMiddleBlock();
             populateLastBlock();
-           // populateGrid();
             populateGrid();
-            gridResult();
-            printGridSavedGrid();
+            copyArray(grid);
+            printGrid(grid);
+            printGrid(savedGrid);
             removeDigits();
-            printGrid();
+//            printGrid(savedGrid);
+            printGrid(grid);
             inGameMenu();
         }
 
@@ -320,7 +320,7 @@ public class Main {
                     //if cell is empty try numbers 1-9
                     if (grid[row][column] == UNASSIGNED) {
                         for (int number = 1; number <= 9; number++) {
-                            //if number is safe to assign assign number. If not leave it as unassigned
+                            //if number is safe to assign  number. If not leave it as unassigned
                             if (safeToAssign(row, column, number)) {
                                 grid[row][column] = number;
                                 if (populateGrid()) {
@@ -339,27 +339,23 @@ public class Main {
             return true;
         }
 
-        public static void saveGrid()
-        {
-            int grid2;
-            for (int row = 0; row < 9; row++) {
-                if ((row + 1) % 3 == 1 && row > 1) {
-                    for (int column = 0; column < 9; column++) {
-                        grid2 = grid[row][column];
-                    }
-                }
+
+
+    public static int[][] copyArray(int[][] passedGrid)
+    {
+        savedGrid = new int[passedGrid.length][passedGrid[0].length];
+        // Copy all the values
+        for (int row = 0; row < passedGrid.length; row++) {
+            for (int column = 0; column < passedGrid[0].length; column++) {
+                savedGrid[row][column] = passedGrid[row][column];
             }
         }
-
-        public static void gridResult()
-        {
-
-            savedGrid = grid.clone();
-//            savedGrid = Arrays.copyOf(grid, grid.length);
-        }
+        return savedGrid;
+    }
 
 
-        public static void printGrid ()
+
+        public static void printGrid (int[][] passedGrid)
         {
             System.out.println(" A  B  C     D  E  F     G  H  I");
             {
@@ -370,15 +366,15 @@ public class Main {
                     }
                     for (int column = 0; column < 9; column++) {
                         if (column == 8) {
-                            grid[row][10] = row;
-                            //print y axis numbers
-                            System.out.print("[" + grid[row][column] + "]" + "  " + (grid[row][10] + 1));
+                            passedGrid[row][10] = row;
+                            //print y-axis numbers
+                            System.out.print("[" + passedGrid[row][column] + "]" + "  " + (passedGrid[row][10] + 1));
                         } else if ((column + 1) % 3 == 0 && column < 9) {
                             // prints between blocks spacing vertically
-                            System.out.print("[" + grid[row][column] + "] | ");
+                            System.out.print("[" + passedGrid[row][column] + "] | ");
                         } else {
                             //print cell
-                            System.out.print("[" + grid[row][column] + "]");
+                            System.out.print("[" + passedGrid[row][column] + "]");
                         }
                     }
                     System.out.println();
@@ -389,32 +385,6 @@ public class Main {
 
 
 
-        public static void printGridSavedGrid ()
-        {
-            System.out.println(" A  B  C     D  E  F     G  H  I");
-            {
-                for (int row = 0; row < 9; row++) {
-                    if ((row + 1) % 3 == 1 && row > 1) {
-                        //print block spacing horizontally
-                        System.out.println("-------------------------------------");
-                    }
-                    for (int column = 0; column < 9; column++) {
-                        if (column == 8) {
-                            savedGrid[row][10] = row;
-                            //print y axis numbers
-                            System.out.print("[" + savedGrid[row][column] + "]" + "  " + (savedGrid[row][10] + 1));
-                        } else if ((column + 1) % 3 == 0 && column < 9) {
-                            // prints between blocks spacing vertically
-                            System.out.print("[" + savedGrid[row][column] + "] | ");
-                        } else {
-                            //print cell
-                            System.out.print("[" + savedGrid[row][column] + "]");
-                        }
-                    }
-                    System.out.println();
-                }
-            }
-        }
 //    public static void populateFirstRow() {
 //        //populate first row
 //        for (int j = 0; j <= 0; j++) {
@@ -527,14 +497,10 @@ public class Main {
             while (count != 0) {
                 int cellId = randomGenerator(9 * 9) - 1;
 
-                // System.out.println(cellId);
-                // extract coordinates i  and j
+
                 int row = (cellId / 9);
                 int column = cellId % 9;
-//            if (column != 0)
-//                column = column - 1;
 
-                // System.out.println(i+" "+j);
                 if (grid[row][column] != 0) {
                     count--;
                     grid[row][column] = 0;
@@ -549,266 +515,4 @@ public class Main {
 
 
 
-//        printSudoku(sudokuBoard);
-//        Scanner scan = new Scanner(System.in);
-//        System.out.println("Enter your cell: A-I & 1-9");
-//        String pos = scan.next();
-//        System.out.println("Enter number");
-//        char number = scan.next().charAt(0);
-//
-//        switch (pos) {
-//            case "A1":
-//                sudokuBoard[1][2] =  number;
-//                break;
-//            case "A2":
-//                sudokuBoard[2][2] =  number;
-//                break;
-//            case "A3":
-//                sudokuBoard[3][2] =  number;
-//                break;
-//                case "A4":
-//                sudokuBoard[5][2] =  number;
-//                break;
-//                case "A5":
-//                sudokuBoard[6][2] =  number;
-//                break;
-//                case "A6":
-//                sudokuBoard[7][2] =  number;
-//                break;
-//                case "A7":
-//                sudokuBoard[9][2] =  number;
-//                break;
-//                case "A8":
-//                sudokuBoard[10][2] =  number;
-//                break;
-//                case "A9":
-//                sudokuBoard[11][2] =  number;
-//                break;
-//        }
-//                printSudoku(sudokuBoard);
-//
-//    }
-//    public static void printSudoku(char[][] sudokuBoard) {
-//        for(char[] row: sudokuBoard) {
-//            for (char c: row) {
-//                System.out.print(c);
-//            }
-//            System.out.println();
-//        }
-
-
-
-
-
-
-
-
-
-//
-//   for(int j =0; j<=0;j++) {
-//        int[] value = rand(ints, ints.length);
-//        //  System.out.println(Arrays.toString(value));
-//
-//        //first box of second row
-//        int row=1;
-//        //   System.out.println(Arrays.toString(ints));
-//
-//        for (int column = 1; column < 4; column++) {
-//            if (grid[row][column] != value[0]) {
-//                grid[2][column] = ints[0];
-//            }
-//            ints = ArrayUtils.remove(ints, 0);
-//        }
-//    }
-//
-//    // System.out.println(Arrays.toString(ints));
-//
-//}
-
-
-//        if (!ArrayUtils.contains(grid[2], ints[i])) // If not
-
-
-
-//        System.out.println(Arrays.toString(ints));
-//
-//        //populate second row
-//        for(int j =1; j<=1;j++) {
-//            System.out.println(Arrays.toString(ints));
-//
-
-//            ints = ints2;
-//  System.out.println(Arrays.toString(ints));
-//            for (int row=1; row<4; row++) {
-//                    for (int column = 4; column < 7; column++) {
-//                        if (grid[row][column] != ints[0] ) {
-//                            for(int count = 1; count<=3; count++ ) {
-//                                if(grid[2][count] != ints[0]) {
-//                                grid[2][column] = ints[0];
-//                                }
-//                            }
-//                        }                            ints = ArrayUtils.remove(ints, 0);
-//
-//                    }
-//                }
-//System.out.println(Arrays.toString(ints));
-
-
-
-//    public static void populateGrid() {
-//
-//        //array of integers between 1 and 9
-//        int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-//
-//        //randomise the integers
-//        int[] value = rand(ints, ints.length);
-//        // System.out.println(Arrays.toString(value));
-//
-//
-//        //populate all the first square with numbers 1 to 9
-//        for (int column = 1; column <= 3; column++) {
-//            for (int row = 1; row <= 3; row++) {
-//                int rand = new Random().nextInt(ints.length);
-//                int random = ints[rand];
-//
-//                grid[row][column] = random;
-//                ints = ArrayUtils.remove(ints, rand);
-//            }
-//        }
-//
-//        //populate first row
-//        for (int column = 4; column <= 9; column++) {
-//            for (int i = 0; i < 9; i++) {
-//                if (grid[1][1] != value[i] && grid[1][2] != value[i] && grid[1][3] != value[i] && grid[1][4] != value[i] && grid[1][5] != value[i] && grid[1][6] != value[i] && grid[1][7] != value[i] && grid[1][8] != value[i] && grid[1][9] != value[i]) {
-//                    grid[1][column] = value[i];
-//                }
-//            }
-//        }
-//
-//        for (int column = 4; column <= 9; column++) {
-//            // if(grid[2][column]==0) {
-//            for (int i = 0; i < 9; i++) {
-////                for (int j = 1; j < 9; j++) {
-//                    if (grid[1][4] != value[i] && grid[3][4] != value[i] && grid[2][1] != value[i] && grid[2][2] != value[i] && grid[2][3] != value[i] && grid[2][4] != value[i] && grid[2][5] != value[i] && grid[2][6] != value[i] && grid[2][7] != value[i] && grid[2][8] != value[i] && grid[2][9] != value[i]) {
-////                        while (grid[2][j] != value[i]) {
-//                            grid[2][column] = value[i];
-//
-////                        }
-//                    }
-//                }
-//            }
-//        }
-
-
-//        int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-//            for (int column = 4; column <= 6; column++) {
-//                for (int row = 2; row <= 3; row++) {
-//
-//                    int rand = new Random().nextInt(values.length);
-//                    int random = values[rand];
-//
-//                    grid[row][column] = random;
-//                    values = ArrayUtils.remove(values, rand);
-//                }
-//            }
-
-
-
-//    public static void populateGrid() {
-//
-//        for (int i = 0; i < 3; i++) {
-//            if(i == 0) {
-//            int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-//
-//            for (int column = 1; column <= 3; column++) {
-//                for (int row = 1; row <= 3; row++) {
-//                    int rand = new Random().nextInt(values.length);
-//                    int random = values[rand];
-//
-//                    grid[row][column] = random;
-//                    values = ArrayUtils.remove(values, rand);
-//                    for (int column1=4; column1<=6;column1++) {
-//                        grid[row][column] =random;
-//                      //  values = ArrayUtils.remove(values, rand);
-//                    }
-//                }
-//            }
-//            }
-//            if(i == 1) {
-//            int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-//
-//            for (int column = 4; column <= 6; column++) {
-//                for (int row = 1; row <= 3; row++) {
-//
-//                    int rand = new Random().nextInt(values.length);
-//                    int random = values[rand];
-//
-//                    grid[row][column] = random;
-//                    values = ArrayUtils.remove(values, rand);
-//                }
-//            }
-//            }
-//            if(i == 2) {
-//            int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-//
-//            for (int column = 7; column <= 9; column++) {
-//                for (int row = 1; row <= 3; row++) {
-//                    int rand = new Random().nextInt(values.length);
-//                    int random = values[rand];
-//
-//                    grid[row][column] = random;
-//                    values = ArrayUtils.remove(values, rand);
-//                }
-//            }
-//            }
-//
-//        }
-//    }
-//
-//
-
-//
-////public static void populateSecondBox() {
-//
-//        for (int j = 0; j <= 0; j++) {
-//            int[] value = shuffleNumberArray(ints, ints.length);
-//            for (int index = 0; index<6;index++) {
-//                if (!ArrayUtils.contains(grid[2], value[index])) {
-//                    System.out.println(value[index]);
-//                    result = ArrayUtils.add(result, value[index]);
-//                }
-//                if (!ArrayUtils.contains(grid[3], value[index])) {
-//                    System.out.println(value[index]);
-//                    result2 = ArrayUtils.add(result2, value[index]);
-//                }
-//            }
-//            System.out.println(Arrays.toString(result));
-//            System.out.println(Arrays.toString(result2));
-//        }
-//    }
-
-
-
-
-//        int[] value = shuffleNumberArray(ints, ints.length);
-//        for (int column = 1; column <= 3; column++)
-//        {
-//            value = ArrayUtils.removeElement(value, grid[0][column]);
-//        }
-////        for (int column = 0; column < 3; column++) {
-////            // If Array does not contain value[0]
-////            if (!ArrayUtils.contains(grid[1], value[0]))
-////            {
-////                grid[1][column] = value[0];
-////                value = ArrayUtils.remove(value, 0);
-////            }
-////        }
-//        value = shuffleNumberArray(value, value.length);
-//
-//        for (int column = 0; column<3; column++)
-//        {
-//            grid[2][column] = value[0];
-//            value = ArrayUtils.remove(value, 0);
-//        }
 
