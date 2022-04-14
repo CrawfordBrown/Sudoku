@@ -62,17 +62,18 @@ public class Main {
                 break;
             }
             case 2: {
-                System.out.println("load prev");
+                loadPreviousGame();
+
                 break;
             }
             case 3: {
-                System.out.println("load game");
                 break;
             }
         }
     }
 
-        public static void selectDifficulty () throws IOException {
+
+    public static void selectDifficulty () throws IOException {
             Scanner scan = new Scanner(System.in);
 
             System.out.println("please select an Option \n1) Easy \n2) Medium \n3) Hard \n4) Impossible");
@@ -234,7 +235,6 @@ public class Main {
                     break;
                 }
                 case 3: {
-                    System.out.println("coming soon");
                     inGameMenu();
                     break;
                 }
@@ -249,7 +249,7 @@ public class Main {
     private static void completeOption() throws IOException {
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("please type \n1) to go back to the main menu \n2) to exit");
+        System.out.println("please type \n1) to go back to the main menu");
 
         int option = scan.nextInt();
 
@@ -272,19 +272,23 @@ public class Main {
             populateMiddleBlock();
             populateLastBlock();
             populateGrid();
-            copyArray(grid);
+            copyGrid(grid);
             printGrid(grid);
             printGrid(savedGrid);
-
-
-
             removeDigits();
-//            printGrid(savedGrid);
+             previousGame(grid);
+//          printGrid(savedGrid);
             printGrid(grid);
             inGameMenu();
         }
 
-        //check if the saved array of the complete grid and the users filled in grid are equal
+    private static void loadPreviousGame() throws IOException {
+        printGrid(grid);
+        inGameMenu();
+    }
+
+
+    //check if the saved array of the complete grid and the users filled in grid are equal
     public static boolean equals(final int[][] arr1, final int[][] arr2)
     {
         if (arr1 == null)
@@ -389,7 +393,7 @@ public class Main {
 
 
 
-    public static int[][] copyArray(int[][] passedGrid)
+    public static int[][] copyGrid(int[][] passedGrid)
     {
         savedGrid = new int[passedGrid.length][passedGrid[0].length];
         // Copy all the values
@@ -400,6 +404,19 @@ public class Main {
         }
         return savedGrid;
     }
+
+    public static int[][] previousGame(int[][] passedGrid)
+    {
+        passedGrid = new int[grid.length][grid[0].length];
+        // Copy all the values
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[0].length; column++) {
+                passedGrid[row][column] = grid[row][column];
+            }
+        }
+        return passedGrid;
+    }
+
 
 
 
