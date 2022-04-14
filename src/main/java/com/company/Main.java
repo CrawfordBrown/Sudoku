@@ -82,7 +82,7 @@ public class Main {
 
             switch (option) {
                 case 1: {
-                    difficulty = 81 - randomGenerator(5);
+                    difficulty = 81 - randomGenerator(2);
                     createGame();
                     break;
                 }
@@ -218,8 +218,9 @@ public class Main {
                     break;
                 }
                 case 2: {
-                    if (Arrays.equals(grid, savedGrid)) {
-                        System.out.println("congratulations");
+                    if (equals(grid, savedGrid)) {
+                        System.out.println("congratulations\n");
+                        completeOption();
                      mainMenu();
 
                    }
@@ -245,8 +246,27 @@ public class Main {
 
         }
 
+    private static void completeOption() throws IOException {
+        Scanner scan = new Scanner(System.in);
 
-        public static void createGame () throws IOException {
+        System.out.println("please type \n1) to go back to the main menu \n2) to exit");
+
+        int option = scan.nextInt();
+
+        switch (option) {
+            case 1: {
+                mainMenu();
+                break;
+            }
+            case 2: {
+                System.out.println("GoodBye");
+                break;
+            }
+
+        }
+    }
+
+    public static void createGame () throws IOException {
             generateEmptyGrid();
             populateFirstBlock();
             populateMiddleBlock();
@@ -255,11 +275,39 @@ public class Main {
             copyArray(grid);
             printGrid(grid);
             printGrid(savedGrid);
+
+
+
             removeDigits();
 //            printGrid(savedGrid);
             printGrid(grid);
             inGameMenu();
         }
+
+        //check if the saved array of the complete grid and the users filled in grid are equal
+    public static boolean equals(final int[][] arr1, final int[][] arr2)
+    {
+        if (arr1 == null)
+        {
+            return (arr2 == null);
+        }
+        if (arr2 == null)
+        {
+            return false;
+        }
+        if (arr1.length != arr2.length)
+        {
+            return false;
+        }
+        for (int i = 0; i < arr1.length; i++)
+        {
+            if (!Arrays.equals(arr1[i], arr2[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
         // set all values in 2d array to 0
         public static int[][] generateEmptyGrid () {
@@ -397,6 +445,7 @@ public class Main {
 //            }
 //        }
 //    }
+
 
         public static void populateFirstBlock () {
 
