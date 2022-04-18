@@ -51,7 +51,7 @@ public class Main {
 
     public static ArrayList<String> savedGames = new ArrayList<String>();
 
-    public static int[][] previousMove;
+    public static ArrayList<Integer> previousMove = new ArrayList<Integer>();
 
 
     private static void mainMenu() throws IOException {
@@ -212,6 +212,8 @@ public class Main {
             int update = scan.nextInt();
 
             grid[row][column] = update;
+            previousMove.add(column);
+            previousMove.add(row);
             printGrid(grid);
         }
 
@@ -220,17 +222,12 @@ public class Main {
 
             System.out.println("please select an Option \n1) insert a number \n2) check answer \n3) save game \n4) go back");
 
-            int count;
-    for (count =0; count<grid.length; ) {
 
-    }
             int option = scan.nextInt();
 
             switch (option) {
                 case 1: {
                     updateCell();
-
-                    count++;
                     inGameMenu();
                     break;
                 }
@@ -302,19 +299,15 @@ public class Main {
             populateMiddleBlock();
             populateLastBlock();
             populateGrid();
-            copyGrid(grid, resultGrid);
-         //   printGrid(grid);
-          //  printGrid(savedGrid);
+            copyGrid(grid);
             removeDigits();
-          //   previousGame(grid);
-//          printGrid(savedGrid);
             printGrid(grid);
             inGameMenu();
         }
 
     private static void loadPreviousGame() throws IOException {
-        printGrid(grid);
-        inGameMenu();
+            printGrid(grid);
+            inGameMenu();
     }
 
     public static void saveGame() throws IOException {
@@ -484,16 +477,17 @@ public class Main {
 
 
 
-    public static int[][] copyGrid(int[][] orignalGrid, int[][] savingGrid)
+    public static int[][] copyGrid(int[][] passedGrid)
     {
-        savingGrid = new int[orignalGrid.length][orignalGrid[0].length];
+        resultGrid = new int[passedGrid.length][passedGrid[0].length];
         // Copy all the values
-        for (int row = 0; row < orignalGrid.length; row++) {
-            for (int column = 0; column < orignalGrid[0].length; column++) {
-                savingGrid[row][column] = orignalGrid[row][column];
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                resultGrid[row][column] = passedGrid[row][column];
+                resultGrid[row][10] = row;
             }
         }
-        return savingGrid;
+        return resultGrid;
     }
 
 //    public static int[][] previousGame(int[][] passedGrid)
