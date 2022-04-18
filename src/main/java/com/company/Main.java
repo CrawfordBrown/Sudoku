@@ -2,7 +2,7 @@ package com.company;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import static java.lang.Character.UNASSIGNED;
@@ -12,6 +12,7 @@ public class Main {
 //    public static int[] result;
 //    public static int[] result2;
     private static int difficulty;
+
 
 
     public static void main(String[] args) throws IOException {
@@ -46,7 +47,12 @@ public class Main {
 
     public static int block;
 
-    public static int[][] savedGrid;
+    public static int[][] resultGrid;
+
+    public static ArrayList<String> savedGames = new ArrayList<String>();
+
+    public static int[][] previousMove;
+
 
     private static void mainMenu() throws IOException {
         Scanner scan = new Scanner(System.in);
@@ -67,8 +73,13 @@ public class Main {
                 break;
             }
             case 3: {
+                displaySavedGames();
+                loadGame();
+                printGrid(grid);
+                inGameMenu();
                 break;
             }
+
         }
     }
 
@@ -209,17 +220,22 @@ public class Main {
 
             System.out.println("please select an Option \n1) insert a number \n2) check answer \n3) save game \n4) go back");
 
+            int count;
+    for (count =0; count<grid.length; ) {
 
+    }
             int option = scan.nextInt();
 
             switch (option) {
                 case 1: {
                     updateCell();
+
+                    count++;
                     inGameMenu();
                     break;
                 }
                 case 2: {
-                    if (equals(grid, savedGrid)) {
+                    if (equals(grid, resultGrid)) {
                         System.out.println("congratulations\n");
                         completeOption();
                      mainMenu();
@@ -235,7 +251,21 @@ public class Main {
                     break;
                 }
                 case 3: {
-                    inGameMenu();
+                    saveGame();
+                    System.out.println("Game saved \nPlease select an option \n1) Main menu \n2) Keep playing");
+                    int saveOption = scan.nextInt();
+                    switch (saveOption) {
+                        case 1: {
+                            mainMenu();
+                            break;
+                        }
+                        case 2: {
+                            printGrid(grid);
+                            inGameMenu();
+                            break;
+                        }
+                    }
+
                     break;
                 }
                 case 4: {
@@ -272,11 +302,11 @@ public class Main {
             populateMiddleBlock();
             populateLastBlock();
             populateGrid();
-            copyGrid(grid);
-            printGrid(grid);
-            printGrid(savedGrid);
+            copyGrid(grid, resultGrid);
+         //   printGrid(grid);
+          //  printGrid(savedGrid);
             removeDigits();
-             previousGame(grid);
+          //   previousGame(grid);
 //          printGrid(savedGrid);
             printGrid(grid);
             inGameMenu();
@@ -286,6 +316,67 @@ public class Main {
         printGrid(grid);
         inGameMenu();
     }
+
+    public static void saveGame() throws IOException {
+
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Please name your saved game");
+
+        String savedName = scan.next().trim();
+
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < grid.length; i++)//for each row
+        {
+            for(int j = 0; j < grid.length; j++)//for each column
+            {
+                builder.append(grid[i][j]+"");//append to the output string
+                if(j < grid.length - 1)//if this is not the last row element
+                    builder.append(",");//then add comma (if you don't like commas you can use spaces)
+            }
+            builder.append("\n");//append new line at the end of the row
+        }
+
+        File file = new File("/Users/crawford/Desktop/SudokuSaves/" + savedName +".txt");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        writer.write(builder.toString());//save the string representation of the board
+        writer.close();
+
+        savedGames.add(savedName);
+
+    }
+
+    public static void displaySavedGames() {
+        for (int i= 0; i<savedGames.size(); i++ ) {
+            System.out.println(savedGames.get(i));
+        }
+
+    }
+
+    public static void loadGame() throws IOException {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Please type the game you would like to load exactly as it is written above");
+
+        String savedNameFile = scan.next().trim();
+        generateEmptyGrid();
+        BufferedReader reader = new BufferedReader(new FileReader("/Users/crawford/Desktop/SudokuSaves/" + savedNameFile +".txt"));
+        String line = "";
+        int row = 0;
+        while((line = reader.readLine()) != null)
+        {
+            String[] cols = line.split(","); //note that if you have used space as separator you have to split on " "
+            int col = 0;
+            for(String  c : cols)
+            {
+                grid[row][col] = Integer.parseInt(c);
+                col++;
+            }
+            row++;
+        }
+        reader.close();
+    }
+
 
 
     //check if the saved array of the complete grid and the users filled in grid are equal
@@ -393,29 +484,29 @@ public class Main {
 
 
 
-    public static int[][] copyGrid(int[][] passedGrid)
+    public static int[][] copyGrid(int[][] orignalGrid, int[][] savingGrid)
     {
-        savedGrid = new int[passedGrid.length][passedGrid[0].length];
+        savingGrid = new int[orignalGrid.length][orignalGrid[0].length];
         // Copy all the values
-        for (int row = 0; row < passedGrid.length; row++) {
-            for (int column = 0; column < passedGrid[0].length; column++) {
-                savedGrid[row][column] = passedGrid[row][column];
+        for (int row = 0; row < orignalGrid.length; row++) {
+            for (int column = 0; column < orignalGrid[0].length; column++) {
+                savingGrid[row][column] = orignalGrid[row][column];
             }
         }
-        return savedGrid;
+        return savingGrid;
     }
 
-    public static int[][] previousGame(int[][] passedGrid)
-    {
-        passedGrid = new int[grid.length][grid[0].length];
-        // Copy all the values
-        for (int row = 0; row < grid.length; row++) {
-            for (int column = 0; column < grid[0].length; column++) {
-                passedGrid[row][column] = grid[row][column];
-            }
-        }
-        return passedGrid;
-    }
+//    public static int[][] previousGame(int[][] passedGrid)
+//    {
+//        passedGrid = new int[grid.length][grid[0].length];
+//        // Copy all the values
+//        for (int row = 0; row < grid.length; row++) {
+//            for (int column = 0; column < grid[0].length; column++) {
+//                passedGrid[row][column] = grid[row][column];
+//            }
+//        }
+//        return passedGrid;
+//    }
 
 
 
