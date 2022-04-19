@@ -49,9 +49,9 @@ public class Main {
 
     public static int[][] resultGrid;
 
-    public static ArrayList<String> savedGames = new ArrayList<String>();
+    public static ArrayList<String> savedGames = new ArrayList<>();
 
-    public static ArrayList<Integer> previousMove = new ArrayList<Integer>();
+    public static ArrayList<Integer> previousMoves = new ArrayList<>();
 
 
     private static void mainMenu() throws IOException {
@@ -63,23 +63,14 @@ public class Main {
         int option = scan.nextInt();
 
         switch (option) {
-            case 1: {
-                selectDifficulty();
-                break;
-            }
-            case 2: {
-                loadPreviousGame();
-
-                break;
-            }
-            case 3: {
+            case 1 -> selectDifficulty();
+            case 2 -> loadPreviousGame();
+            case 3 -> {
                 displaySavedGames();
                 loadGame();
                 printGrid(grid);
                 inGameMenu();
-                break;
             }
-
         }
     }
 
@@ -92,28 +83,24 @@ public class Main {
 
             int option = scan.nextInt();
 
-            switch (option) {
-                case 1: {
-                    difficulty = 81 - randomGenerator(2);
-                    createGame();
-                    break;
-                }
-                case 2: {
-                    difficulty = 38 - randomGenerator(5);
-                    createGame();
-                    break;
-                }
-                case 3: {
-                    difficulty = 30 - randomGenerator(5);
-                    createGame();
-                    break;
-                }
-                case 4: {
-                    difficulty = 17;
-                    createGame();
-                    break;
-                }
+        switch (option) {
+            case 1 -> {
+                difficulty = 81 - randomGenerator(2);
+                createGame();
             }
+            case 2 -> {
+                difficulty = 38 - randomGenerator(5);
+                createGame();
+            }
+            case 3 -> {
+                difficulty = 30 - randomGenerator(5);
+                createGame();
+            }
+            case 4 -> {
+                difficulty = 17;
+                createGame();
+            }
+        }
         }
 
         public static void updateCell () throws IOException {
@@ -125,42 +112,16 @@ public class Main {
             int column = 0;
 
             switch (columnCell) {
-                case 'A': {
-                    column = 0;
-                    break;
+                case 'A' -> {
                 }
-                case 'B': {
-                    column = 1;
-                    break;
-                }
-                case 'C': {
-                    column = 2;
-                    break;
-                }
-                case 'D': {
-                    column = 3;
-                    break;
-                }
-                case 'E': {
-                    column = 4;
-                    break;
-                }
-                case 'F': {
-                    column = 5;
-                    break;
-                }
-                case 'G': {
-                    column = 6;
-                    break;
-                }
-                case 'H': {
-                    column = 7;
-                    break;
-                }
-                case 'I': {
-                    column = 8;
-                    break;
-                }
+                case 'B' -> column = 1;
+                case 'C' -> column = 2;
+                case 'D' -> column = 3;
+                case 'E' -> column = 4;
+                case 'F' -> column = 5;
+                case 'G' -> column = 6;
+                case 'H' -> column = 7;
+                case 'I' -> column = 8;
             }
 
             System.out.println("Please select a row from 1-9");
@@ -169,42 +130,16 @@ public class Main {
             int rowCell = scan.nextInt();
 
             switch (rowCell) {
-                case 1: {
-                    row = 0;
-                    break;
+                case 1 -> {
                 }
-                case 2: {
-                    row = 1;
-                    break;
-                }
-                case 3: {
-                    row = 2;
-                    break;
-                }
-                case 4: {
-                    row = 3;
-                    break;
-                }
-                case 5: {
-                    row = 4;
-                    break;
-                }
-                case 6: {
-                    row = 5;
-                    break;
-                }
-                case 7: {
-                    row = 6;
-                    break;
-                }
-                case 8: {
-                    row = 7;
-                    break;
-                }
-                case 9: {
-                    row = 8;
-                    break;
-                }
+                case 2 -> row = 1;
+                case 3 -> row = 2;
+                case 4 -> row = 3;
+                case 5 -> row = 4;
+                case 6 -> row = 5;
+                case 7 -> row = 6;
+                case 8 -> row = 7;
+                case 9 -> row = 8;
             }
 
             System.out.println("Please put a number from 1-9 to update the cell");
@@ -212,63 +147,59 @@ public class Main {
             int update = scan.nextInt();
 
             grid[row][column] = update;
-            previousMove.add(column);
-            previousMove.add(row);
+            previousMoves.add(column);
+            previousMoves.add(row);
             printGrid(grid);
         }
 
         public static void inGameMenu () throws IOException {
             Scanner scan = new Scanner(System.in);
 
-            System.out.println("please select an Option \n1) insert a number \n2) check answer \n3) save game \n4) go back");
+            System.out.println("please select an Option \n1) insert a number \n2) check answer \n3) save game \n)4 undo \n5) go back");
 
 
             int option = scan.nextInt();
 
             switch (option) {
-                case 1: {
+                case 1 -> {
                     updateCell();
                     inGameMenu();
-                    break;
                 }
-                case 2: {
+                case 2 -> {
                     if (equals(grid, resultGrid)) {
                         System.out.println("congratulations\n");
                         completeOption();
-                     mainMenu();
+                        mainMenu();
+
+                    } else {
+                        System.out.println("that is not correct");
+                        printGrid(grid);
+                        inGameMenu();
+                        // printGrid();
 
                    }
-                   else {
-                       System.out.println("that is not correct");
-                       printGrid(grid);
-                       inGameMenu();
-                   // printGrid();
-
-                   }
-                    break;
                 }
-                case 3: {
+                case 3 -> {
                     saveGame();
                     System.out.println("Game saved \nPlease select an option \n1) Main menu \n2) Keep playing");
                     int saveOption = scan.nextInt();
                     switch (saveOption) {
-                        case 1: {
-                            mainMenu();
-                            break;
-                        }
-                        case 2: {
+                        case 1 -> mainMenu();
+                        case 2 -> {
                             printGrid(grid);
                             inGameMenu();
-                            break;
                         }
                     }
 
-                    break;
                 }
-                case 4: {
-                    mainMenu();
-                    break;
+                case 4 -> {
+                    undo();
+                    printGrid(grid);
+                    inGameMenu();
                 }
+                case 5 -> mainMenu();
+
+                default -> throw new IllegalStateException("Unexpected value: " + option);
             }
 
         }
@@ -281,15 +212,8 @@ public class Main {
         int option = scan.nextInt();
 
         switch (option) {
-            case 1: {
-                mainMenu();
-                break;
-            }
-            case 2: {
-                System.out.println("GoodBye");
-                break;
-            }
-
+            case 1 -> mainMenu();
+            case 2 -> System.out.println("GoodBye");
         }
     }
 
@@ -303,6 +227,18 @@ public class Main {
             removeDigits();
             printGrid(grid);
             inGameMenu();
+        }
+
+        public static void undo() {
+            int indexRow = previousMoves.size() - 1;
+            int row  = previousMoves.get(indexRow);
+            previousMoves.remove(indexRow);
+
+            int indexColumn = previousMoves.size() - 1;
+            int column  = previousMoves.get(indexColumn);
+            previousMoves.remove(indexColumn);
+
+            grid[row][column] = 0;
         }
 
     private static void loadPreviousGame() throws IOException {
@@ -319,29 +255,31 @@ public class Main {
         String savedName = scan.next().trim();
 
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < grid.length; i++)//for each row
-        {
-            for(int j = 0; j < grid.length; j++)//for each column
-            {
-                builder.append(grid[i][j]+"");//append to the output string
-                if(j < grid.length - 1)//if this is not the last row element
-                    builder.append(",");//then add comma (if you don't like commas you can use spaces)
+        for (int[] value : grid) {
+            for (int column = 0; column < grid.length; column++) {
+                builder.append(value[column]);
+                //if this is not the last element in a row, add a comma
+                if (column < grid.length - 1)
+                    builder.append(",");
             }
-            builder.append("\n");//append new line at the end of the row
+            //new line at the end of each row
+            builder.append("\n");
         }
 
+        //creating file path
         File file = new File("/Users/crawford/Desktop/SudokuSaves/" + savedName +".txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-        writer.write(builder.toString());//save the string representation of the board
+        writer.write(builder.toString());
         writer.close();
 
+        //add the saved game name to the array of saved games
         savedGames.add(savedName);
 
     }
 
     public static void displaySavedGames() {
-        for (int i= 0; i<savedGames.size(); i++ ) {
-            System.out.println(savedGames.get(i));
+        for (String savedGame : savedGames) {
+            System.out.println(savedGame);
         }
 
     }
@@ -354,7 +292,7 @@ public class Main {
         String savedNameFile = scan.next().trim();
         generateEmptyGrid();
         BufferedReader reader = new BufferedReader(new FileReader("/Users/crawford/Desktop/SudokuSaves/" + savedNameFile +".txt"));
-        String line = "";
+        String line;
         int row = 0;
         while((line = reader.readLine()) != null)
         {
@@ -398,7 +336,7 @@ public class Main {
     }
 
         // set all values in 2d array to 0
-        public static int[][] generateEmptyGrid () {
+        public static void generateEmptyGrid () {
 
             grid = new int[9][11];
             for (int r = 0; r < grid.length; r++) {
@@ -406,7 +344,6 @@ public class Main {
                     grid[r][c] = 0;
                 }
             }
-            return grid;
         }
 
         public static int[][] setFirstCell () {
@@ -429,13 +366,13 @@ public class Main {
         static int[] shuffleNumberArray ( int[] array, int a)
         {
             // Creating object for Random class
-            Random rd = new Random();
+            Random random = new Random();
 
             // Starting from the last element and swapping one by one.
             for (int i = a - 1; i > 0; i--) {
 
                 // Pick a random index from 0 to i
-                int j = rd.nextInt(i + 1);
+                int j = random.nextInt(i + 1);
 
                 // Swap array[i] with the element at random index
                 int temp = array[i];
@@ -477,7 +414,7 @@ public class Main {
 
 
 
-    public static int[][] copyGrid(int[][] passedGrid)
+    public static void copyGrid(int[][] passedGrid)
     {
         resultGrid = new int[passedGrid.length][passedGrid[0].length];
         // Copy all the values
@@ -487,20 +424,7 @@ public class Main {
                 resultGrid[row][10] = row;
             }
         }
-        return resultGrid;
     }
-
-//    public static int[][] previousGame(int[][] passedGrid)
-//    {
-//        passedGrid = new int[grid.length][grid[0].length];
-//        // Copy all the values
-//        for (int row = 0; row < grid.length; row++) {
-//            for (int column = 0; column < grid[0].length; column++) {
-//                passedGrid[row][column] = grid[row][column];
-//            }
-//        }
-//        return passedGrid;
-//    }
 
 
 
@@ -519,7 +443,7 @@ public class Main {
                             passedGrid[row][10] = row;
                             //print y-axis numbers
                             System.out.print("[" + passedGrid[row][column] + "]" + "  " + (passedGrid[row][10] + 1));
-                        } else if ((column + 1) % 3 == 0 && column < 9) {
+                        } else if ((column + 1) % 3 == 0) {
                             // prints between blocks spacing vertically
                             System.out.print("[" + passedGrid[row][column] + "] | ");
                         } else {
@@ -534,26 +458,11 @@ public class Main {
 
 
 
-
-//    public static void populateFirstRow() {
-//        //populate first row
-//        for (int j = 0; j <= 0; j++) {
-//            int[] value = shuffleNumberArray(ints, ints.length);
-//
-//            for (int column = 0; column < 9; column++) {
-//                grid[0][column] = value[0];
-//                //System.out.println(Arrays.toString(ints));
-//                value = ArrayUtils.remove(value, 0);
-//            }
-//        }
-//    }
-
-
         public static void populateFirstBlock () {
 
             int[] value = shuffleNumberArray(ints, ints.length);
 
-            value = shuffleNumberArray(value, value.length);
+            shuffleNumberArray(value, value.length);
             for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 3; column++) {
                     grid[row][column] = value[0];
@@ -567,7 +476,7 @@ public class Main {
 
             int[] value = shuffleNumberArray(ints, ints.length);
 
-            value = shuffleNumberArray(value, value.length);
+            shuffleNumberArray(value, value.length);
             for (int row = 3; row < 6; row++) {
                 for (int column = 3; column < 6; column++) {
                     grid[row][column] = value[0];
@@ -580,7 +489,7 @@ public class Main {
 
             int[] value = shuffleNumberArray(ints, ints.length);
 
-            value = shuffleNumberArray(value, value.length);
+            shuffleNumberArray(value, value.length);
             for (int row = 6; row < 9; row++) {
                 for (int column = 6; column < 9; column++) {
                     grid[row][column] = value[0];
