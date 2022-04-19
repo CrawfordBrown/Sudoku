@@ -51,7 +51,17 @@ public class Main {
 
     public static ArrayList<String> savedGames = new ArrayList<>();
 
-    public static ArrayList<Integer> previousMoves = new ArrayList<>();
+    public static ArrayList<Integer> undoMovesColumn = new ArrayList<>();
+
+    public static ArrayList<Integer> undoMovesRow = new ArrayList<>();
+
+    public static ArrayList<Integer> undoMovesValue = new ArrayList<>();
+
+    public static ArrayList<Integer> redoMovesColumn = new ArrayList<>();
+
+    public static ArrayList<Integer> redoMovesRow = new ArrayList<>();
+
+    public static ArrayList<Integer> redoMovesValue = new ArrayList<>();
 
 
     private static void mainMenu() throws IOException {
@@ -145,17 +155,22 @@ public class Main {
             System.out.println("Please put a number from 1-9 to update the cell");
 
             int update = scan.nextInt();
+            int prevInt = grid[row][column];
+            undoMovesValue.add(prevInt);
 
             grid[row][column] = update;
-            previousMoves.add(column);
-            previousMoves.add(row);
+            undoMovesColumn.add(column);
+            undoMovesRow.add(row);
+//            System.out.println(undoMovesValue);
+//            System.out.println(undoMovesColumn);
+//            System.out.println(undoMovesRow);
             printGrid(grid);
         }
 
         public static void inGameMenu () throws IOException {
             Scanner scan = new Scanner(System.in);
 
-            System.out.println("please select an Option \n1) insert a number \n2) check answer \n3) save game \n)4 undo \n5) go back");
+            System.out.println("please select an Option \n1) insert a number \n2) undo \n3) redo \n4) check answer \n5) save game \n6) Main menu");
 
 
             int option = scan.nextInt();
@@ -166,6 +181,18 @@ public class Main {
                     inGameMenu();
                 }
                 case 2 -> {
+                    undo();
+                    printGrid(grid);
+                    inGameMenu();
+                }
+                case 3 -> {
+                    redo();
+
+                    printGrid(grid);
+                    inGameMenu();
+                }
+
+                case 4 -> {
                     if (equals(grid, resultGrid)) {
                         System.out.println("congratulations\n");
                         completeOption();
@@ -177,9 +204,9 @@ public class Main {
                         inGameMenu();
                         // printGrid();
 
-                   }
+                    }
                 }
-                case 3 -> {
+                case 5 -> {
                     saveGame();
                     System.out.println("Game saved \nPlease select an option \n1) Main menu \n2) Keep playing");
                     int saveOption = scan.nextInt();
@@ -192,12 +219,7 @@ public class Main {
                     }
 
                 }
-                case 4 -> {
-                    undo();
-                    printGrid(grid);
-                    inGameMenu();
-                }
-                case 5 -> mainMenu();
+                case 6 -> mainMenu();
 
                 default -> throw new IllegalStateException("Unexpected value: " + option);
             }
@@ -230,15 +252,47 @@ public class Main {
         }
 
         public static void undo() {
-            int indexRow = previousMoves.size() - 1;
-            int row  = previousMoves.get(indexRow);
-            previousMoves.remove(indexRow);
+            int indexRow = undoMovesRow.size() - 1;
+            int row  = undoMovesRow.get(indexRow);
+            redoMovesRow.add(row);
+            undoMovesRow.remove(indexRow);
 
-            int indexColumn = previousMoves.size() - 1;
-            int column  = previousMoves.get(indexColumn);
-            previousMoves.remove(indexColumn);
+            int indexColumn = undoMovesColumn.size() - 1;
+            int column  = undoMovesColumn.get(indexColumn);
+            redoMovesColumn.add(column);
+            undoMovesColumn.remove(indexColumn);
 
-            grid[row][column] = 0;
+            redoMovesValue.add(grid[row][column]);
+
+            int indexValue =  undoMovesValue.size() - 1;
+
+            grid[row][column] = undoMovesValue.get(indexValue);
+            undoMovesValue.remove(indexValue);
+
+        }
+
+        public static void redo() {
+            int indexRow = redoMovesRow.size() - 1;
+            int indexColumn = redoMovesColumn.size() - 1;
+            int indexValue = redoMovesValue.size() - 1;
+
+            int row = redoMovesRow.get(indexRow);
+        int column = redoMovesColumn.get(indexColumn);
+        int value = redoMovesValue.get(indexValue);
+
+        int prevInt = grid[row][column];
+
+        grid[row][column] = value;
+
+        redoMovesRow.remove(indexRow);
+        redoMovesColumn.remove(indexColumn);
+        redoMovesValue.remove(indexValue);
+////////////////////////////////////////////////////
+            undoMovesValue.add(prevInt);
+
+            undoMovesColumn.add(column);
+            undoMovesRow.add(row);
+
         }
 
     private static void loadPreviousGame() throws IOException {
